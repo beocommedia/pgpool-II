@@ -1,0 +1,629 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Authentication Methods</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REV="MADE"
+HREF="mailto:pgsql-docs@postgresql.org"><LINK
+REL="HOME"
+TITLE="pgpool-II 4.0.2 Documentation"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Client Authentication"
+HREF="client-authentication.html"><LINK
+REL="PREVIOUS"
+TITLE="The pool_hba.conf File"
+HREF="auth-pool-hba-conf.html"><LINK
+REL="NEXT"
+TITLE="Using different methods for frontend and backend authentication"
+HREF="auth-different-auth-method.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="stylesheet.css"><META
+HTTP-EQUIV="Content-Type"
+CONTENT="text/html; charset=ISO-8859-1"><META
+NAME="creation"
+CONTENT="2018-11-21T09:03:11"></HEAD
+><BODY
+CLASS="SECT1"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="4"
+ALIGN="center"
+VALIGN="bottom"
+><A
+HREF="index.html"
+>pgpool-II 4.0.2 Documentation</A
+></TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+TITLE="The pool_hba.conf File"
+HREF="auth-pool-hba-conf.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="client-authentication.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="60%"
+ALIGN="center"
+VALIGN="bottom"
+>Chapter 6. Client Authentication</TD
+><TD
+WIDTH="20%"
+ALIGN="right"
+VALIGN="top"
+><A
+TITLE="Using different methods for frontend and backend authentication"
+HREF="auth-different-auth-method.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECT1"
+><H1
+CLASS="SECT1"
+><A
+NAME="AUTH-METHODS"
+>6.2. Authentication Methods</A
+></H1
+><P
+>      The following subsections describe the authentication methods in more detail.
+    </P
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AUTH-TRUST"
+>6.2.1. Trust Authentication</A
+></H2
+><P
+>	When <TT
+CLASS="LITERAL"
+>trust</TT
+> authentication is specified,
+	<SPAN
+CLASS="PRODUCTNAME"
+>Pgpool-II</SPAN
+> assumes that anyone who can
+	connect to the server is authorized to access connect with
+	whatever database user name they specify.
+      </P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AUTH-MD5"
+>6.2.2. MD5 Password Authentication</A
+></H2
+><P
+>	This authentication method is the password-based authentication
+	methods in which MD-5-hashed password is sent by client.
+	Since <SPAN
+CLASS="PRODUCTNAME"
+>Pgpool-II</SPAN
+> does not has the
+	visibility of <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+>'s database
+	user password and client application only sends the MD5-hash of
+	the password, so <TT
+CLASS="LITERAL"
+>md5</TT
+> authentication
+	in <SPAN
+CLASS="PRODUCTNAME"
+>Pgpool-II</SPAN
+> is supported using the
+	<A
+HREF="runtime-config-connection.html#GUC-POOL-PASSWD"
+>pool_passwd</A
+> authentication file.
+      </P
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+>	  If <SPAN
+CLASS="PRODUCTNAME"
+>Pgpool-II</SPAN
+> is operated in raw
+	  mode or there's only 1 backend configured, you don't need to
+	  setup <A
+HREF="runtime-config-connection.html#GUC-POOL-PASSWD"
+>pool_passwd</A
+>.
+	</P
+></BLOCKQUOTE
+></DIV
+><DIV
+CLASS="SECT3"
+><H3
+CLASS="SECT3"
+><A
+NAME="MD5-AUTHENTICATION-FILE-FORMAT"
+>6.2.2.1. Authentication file format</A
+></H3
+><P
+>      To use the <TT
+CLASS="LITERAL"
+>md5</TT
+> authentication
+      <A
+HREF="runtime-config-connection.html#GUC-POOL-PASSWD"
+>pool_passwd</A
+> authentication file
+      must contain the user password in either plain text
+      <TT
+CLASS="LITERAL"
+>md5</TT
+> or <TT
+CLASS="LITERAL"
+>AES</TT
+> encrypted format.
+    </P
+><P
+>	  The <A
+HREF="runtime-config-connection.html#GUC-POOL-PASSWD"
+>pool_passwd</A
+> file should contain lines in the following format:
+	  </P><PRE
+CLASS="PROGRAMLISTING"
+>            "username:plain_text_passwd"
+	  </PRE
+><P>
+	  </P><PRE
+CLASS="PROGRAMLISTING"
+>            "username:encrypted_passwd"
+	  </PRE
+><P>
+	</P
+></DIV
+><DIV
+CLASS="SECT3"
+><H3
+CLASS="SECT3"
+><A
+NAME="SETTING-MD5-AUTHENTICATION"
+>6.2.2.2. Setting md5 Authentication</A
+></H3
+><P
+>	  here are the steps to enable <TT
+CLASS="LITERAL"
+>md5</TT
+>
+	  authentication:
+	</P
+><P
+>	  1- Login as the database's operating system user and type
+	  <TT
+CLASS="COMMAND"
+>"pg_md5 --md5auth --username=username password"</TT
+> user name
+	  and <TT
+CLASS="LITERAL"
+>md5</TT
+> encrypted password are registered
+	  into <A
+HREF="runtime-config-connection.html#GUC-POOL-PASSWD"
+>pool_passwd</A
+>.  If pool_passwd does not exist yet, pg_md5
+	  command will automatically create it for you.
+	  </P><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+>              user name and password must be identical to those registered
+              in <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+> server.
+            </P
+></BLOCKQUOTE
+></DIV
+><P>
+	</P
+><P
+>	  2- Add an appropriate md5 entry to <TT
+CLASS="FILENAME"
+>pool_hba.conf</TT
+>.
+	  See <A
+HREF="auth-pool-hba-conf.html"
+>Section 6.1</A
+> for more details.
+	</P
+><P
+>	  3- After changing md5 password (in both pool_passwd
+	  and <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+> of course), reload
+	  the pgpool configurations.
+	</P
+></DIV
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AUTH-SCRAM"
+>6.2.3. scram-sha-256 Authentication</A
+></H2
+><P
+>      This authentication method also known as SCRAM is a
+      challenge-response based authentication that prevents the
+      password sniffing on untrusted connections.
+      Since <SPAN
+CLASS="PRODUCTNAME"
+>Pgpool-II</SPAN
+> does not has the
+      visibility of <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+>'s database user
+      password, so <TT
+CLASS="LITERAL"
+>SCRAM</TT
+> authentication is supported using the
+	  <A
+HREF="runtime-config-connection.html#GUC-POOL-PASSWD"
+>pool_passwd</A
+> authentication file.
+      </P
+><DIV
+CLASS="SECT3"
+><H3
+CLASS="SECT3"
+><A
+NAME="SCRAM-AUTHENTICATION-FILE-FORMAT"
+>6.2.3.1. Authentication file entry for SCRAM</A
+></H3
+><P
+>      To use the <TT
+CLASS="LITERAL"
+>SCRAM</TT
+> authentication
+      <A
+HREF="runtime-config-connection.html#GUC-POOL-PASSWD"
+>pool_passwd</A
+> authentication file
+      must contain the user password in either plain text
+      or <TT
+CLASS="LITERAL"
+>AES</TT
+> encrypted format.
+
+	  </P><PRE
+CLASS="PROGRAMLISTING"
+>            "username:plain_text_passwd"
+	  </PRE
+><P>
+	  </P><PRE
+CLASS="PROGRAMLISTING"
+>            "username:AES_encrypted_passwd"
+	  </PRE
+><P>
+	  </P><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+>              <TT
+CLASS="LITERAL"
+>md5</TT
+> type user passwords in
+              <A
+HREF="runtime-config-connection.html#GUC-POOL-PASSWD"
+>pool_passwd</A
+> file can't be used for
+              <TT
+CLASS="LITERAL"
+>scram</TT
+> authentication
+            </P
+></BLOCKQUOTE
+></DIV
+><P>
+	</P
+></DIV
+><DIV
+CLASS="SECT3"
+><H3
+CLASS="SECT3"
+><A
+NAME="SETTING-SCRAM-SHA-256-AUTHENTICATION"
+>6.2.3.2. Setting scram-sha-256 Authentication</A
+></H3
+><P
+>	  Here are the steps to enable <TT
+CLASS="LITERAL"
+>scram-sha-256</TT
+>
+	  authentication:
+	</P
+><P
+>	  1- Create <A
+HREF="runtime-config-connection.html#GUC-POOL-PASSWD"
+>pool_passwd</A
+> file entry
+      for database user and password in plain text or <TT
+CLASS="LITERAL"
+>AES</TT
+>
+      encrypted format.
+      The <A
+HREF="pg-enc.html"
+>pg_enc</A
+> utility that comes with <SPAN
+CLASS="PRODUCTNAME"
+>Pgpool-II</SPAN
+>
+      can be used to create the <TT
+CLASS="LITERAL"
+>AES</TT
+> encrypted password
+      entries in the <A
+HREF="runtime-config-connection.html#GUC-POOL-PASSWD"
+>pool_passwd</A
+> file.
+	  </P><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+>              User name and password must be identical to those registered
+              in the <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+> server.
+            </P
+></BLOCKQUOTE
+></DIV
+><P>
+	</P
+><P
+>	  2- Add an appropriate scram-sha-256 entry to <TT
+CLASS="FILENAME"
+>pool_hba.conf</TT
+>.
+	  See <A
+HREF="auth-pool-hba-conf.html"
+>Section 6.1</A
+> for more details.
+	</P
+><P
+>	  3- After changing SCRAM password (in both pool_passwd
+	  and <SPAN
+CLASS="PRODUCTNAME"
+>PostgreSQL</SPAN
+> of course), reload
+	  the <SPAN
+CLASS="PRODUCTNAME"
+>Pgpool-II</SPAN
+> configuration.
+	</P
+></DIV
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AUTH-CERT"
+>6.2.4. Certificate Authentication</A
+></H2
+><P
+>      This authentication method uses <TT
+CLASS="LITERAL"
+>SSL</TT
+> client certificates
+      to perform authentication. It is therefore only available for SSL connections.
+      When using this authentication method, the <SPAN
+CLASS="PRODUCTNAME"
+>Pgpool-II</SPAN
+>
+      will require that the client provide a valid certificate.
+      No password prompt will be sent to the client.
+      The <TT
+CLASS="LITERAL"
+>cn</TT
+> (Common Name) attribute of the certificate will be
+      compared to the requested database user name, and if they match the login will
+      be allowed.
+      </P
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+>	  The certificate authentication works between client and
+      <SPAN
+CLASS="PRODUCTNAME"
+>Pgpool-II</SPAN
+>, for the
+	  backend authentication you can use any other authentication method
+	</P
+></BLOCKQUOTE
+></DIV
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AUTH-PAM"
+>6.2.5. PAM Authentication</A
+></H2
+><P
+>	This authentication method uses PAM (Pluggable
+	Authentication Modules) as the authentication mechanism. The
+	default PAM service name is <TT
+CLASS="LITERAL"
+>pgpool</TT
+>.
+	PAM authentication is supported using user information on
+	the host where <SPAN
+CLASS="PRODUCTNAME"
+>Pgpool-II</SPAN
+> is executed.
+	For more
+	information about PAM, please read the
+	<A
+HREF="http://www.kernel.org/pub/linux/libs/pam/"
+TARGET="_top"
+>	  <SPAN
+CLASS="PRODUCTNAME"
+>Linux-PAM</SPAN
+> Page</A
+>.
+      </P
+><P
+>	To enable PAM authentication, you need to create a service-configuration
+	file for <SPAN
+CLASS="PRODUCTNAME"
+>Pgpool-II</SPAN
+> in the system's
+	PAM configuration directory (which is usually at <TT
+CLASS="LITERAL"
+>"/etc/pam.d"</TT
+>).
+	A sample service-configuration file is installed as
+	<TT
+CLASS="FILENAME"
+>"share/pgpool-II/pgpool.pam"</TT
+> under the install directory.
+      </P
+><DIV
+CLASS="NOTE"
+><BLOCKQUOTE
+CLASS="NOTE"
+><P
+><B
+>Note: </B
+>	  To enable PAM support the <SPAN
+CLASS="PRODUCTNAME"
+>Pgpool-II</SPAN
+>
+	  must be configured with <TT
+CLASS="COMMAND"
+>"--with-pam"</TT
+>
+	</P
+></BLOCKQUOTE
+></DIV
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="auth-pool-hba-conf.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="auth-different-auth-method.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>The <TT
+CLASS="FILENAME"
+>pool_hba.conf</TT
+> File</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="client-authentication.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Using different methods for frontend and backend authentication</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>
